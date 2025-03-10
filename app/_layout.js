@@ -19,6 +19,7 @@ const MainLayout = () => {
             router.replace('home');
         }else if(!isAuthenticated ) {
             // Redirect to sign in
+            // router replace will replace the current route with the new one so there is no back button
             router.replace('signIn');
         };
     }, [isAuthenticated]); 
@@ -27,7 +28,7 @@ const MainLayout = () => {
 }
 
 
-export default function RootLaout() {
+export default function RootLayout() {
     return (
         <AuthContextProvider>
             <MainLayout />

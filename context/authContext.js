@@ -14,7 +14,7 @@ export const AuthContextProvider = ({ children }) => {
 
         //on Auth state change
         setTimeout(() => {
-            setIsAuthenticated(true);
+            setIsAuthenticated(undefined);
         }, 3000);
 
     }, []);
