@@ -57,6 +57,7 @@ export default function SignUp() {
               placeholder='Username'
               placeholderTextColor={'grey'}
             />
+            
             {/* email */}
           </View><View style={{ height: hp(7) }} className="flex-row gap-4 px-4 bg-neutral-100 items-center rounded-2xl">
             <Octicons name="mail" size={hp(2.7)} color="grey" />
