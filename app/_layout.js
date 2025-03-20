@@ -3,7 +3,13 @@ import React, { useEffect } from 'react'
 import { Slot, useRouter, useSegments } from "expo-router";
 import "../global.css";
 import { AuthContextProvider, useAuth } from '../context/authContext';
+import { LogBox } from 'react-native';
 
+LogBox.ignoreLogs([
+  'Setting a timer',
+  'AsyncStorage has been extracted from react-native core',
+  'Firebase: Error (auth/network-request-failed)'
+]);
 
 const MainLayout = () => {
     const {isAuthenticated} = useAuth();

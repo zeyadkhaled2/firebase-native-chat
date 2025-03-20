@@ -46,7 +46,7 @@ export default function SignIn() {
           <View style={{ height: hp(7) }} className="flex-row gap-4 px-4 bg-neutral-100 items-center rounded-2xl">
             <Octicons name="mail" size={hp(2.7)} color="grey" />
             <TextInput
-              onChange={value => emailRef.current = value}
+              onChangeText={value => emailRef.current = value}
               style={{ height: hp(2) }}
               className="flex-1 font-semibold text-neutral-700"
               placeholder='Email address'
@@ -59,7 +59,7 @@ export default function SignIn() {
             <View style={{ height: hp(7) }} className="flex-row gap-4 px-4 bg-neutral-100 items-center rounded-2xl">
               <Octicons name="lock" size={hp(2.7)} color="grey" />
               <TextInput
-                onChange={value => passwordRef.current = value}
+                onChangeText={value => passwordRef.current = value}
                 style={{ height: hp(2) }}
                 className="flex-1 font-semibold text-neutral-700"
                 placeholder='Password'
