@@ -1,9 +1,9 @@
-import { createUserWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
+import { createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "firebase/auth";
 import { createContext, useEffect, useState } from "react";
 import { useContext } from "react";
 import { auth, db, userRef } from "../firebaseConfig";
-import { addDoc, doc, setDoc } from "firebase/firestore";
-import { Alert } from 'react-native';
+import { addDoc, doc, getDoc, setDoc } from "firebase/firestore";
+
 
 export const AuthContext = createContext();
 
@@ -19,6 +19,8 @@ export const AuthContextProvider = ({ children }) => {
         const unsub = onAuthStateChanged(auth, (user) => {
             if (user) {
                 setIsAuthenticated(true);
+                updateUserData(user.uid)
+                console.log("got user : ", user);
                 setUser(user);
             }
             else {
@@ -30,13 +32,42 @@ export const AuthContextProvider = ({ children }) => {
 
     }, []);
 
+    useEffect(() => {
+        if (user) {
+            console.log("Updated user state:", user);
+        }
+    }, [user]);
+
+    const updateUserData = async (userId) => {
+        const docRef = doc(db,"users",userId)
+        const docSnap = await getDoc(docRef);
+
+        if(docSnap.exists()){
+            let data = docSnap.data();
+            setUser({...user, username: data.username, profileUrl: data.profileUrl, userId: data.userId})
+            console.log("user has been updated: ", data.username)
+        }else
+        console.log(" failed user has been updated")
+
+    }
+
 
     const login = async (email, password) => {
         //login logic
         try {
+            const response = await signInWithEmailAndPassword(auth, email, password);
+            return { success: true };
 
         } catch (error) {
+            let message = error.message
 
+            console.log("message", message)
+            if (message.includes("(auth/invalid-email)")) message = "Invalid Email"
+            if (message.includes("(auth/invalid-credential)")) message = "Wrong Credentials"
+
+            console.log("message", message)
+            // console.error("Registration error:", error);
+            return { success: false, message };
         }
 
 
@@ -44,9 +75,10 @@ export const AuthContextProvider = ({ children }) => {
     const logout = async () => {
         //login logic
         try {
-
+            await signOut(auth)
+            return { success: true }
         } catch (error) {
-
+            return { success: false, message: error.message, error: error }
         }
 
 
@@ -56,7 +88,7 @@ export const AuthContextProvider = ({ children }) => {
             // Remove NetInfo check since package is not installed
             const response = await createUserWithEmailAndPassword(auth, email, password);
             console.log(response?.user);
-            
+
             console.log("user created successfully");
 
             await setDoc(doc(db, "users", response?.user?.uid), {
@@ -64,11 +96,18 @@ export const AuthContextProvider = ({ children }) => {
                 profileUrl,
                 userId: response?.user?.uid
             });
-            return {success: true, data: response?.user};
-        
+            return { success: true, data: response?.user };
+
         } catch (error) {
-            console.error("Registration error:", error);
-            return {success: false, error: error.message};
+            let message = error.message
+
+            console.log("message", message)
+            if (message.includes("(auth/invalid-email)")) message = "Invalid Email"
+            if (message.includes("(auth/weak-password)")) message = "Weak Password"
+            if (message.includes("(auth/email-already-in-use)")) message = "This Email already in use"
+            console.log("message", message)
+            // console.error("Registration error:", error);
+            return { success: false, message };
         }
     };
 

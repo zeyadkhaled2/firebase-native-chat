@@ -5,20 +5,29 @@ import { StatusBar } from 'expo-status-bar';
 import Octicons from '@expo/vector-icons/Octicons';
 import { useRouter } from 'expo-router';
 import Loading from '../components/Loading';
+import { useAuth } from '../context/authContext';
 
 export default function SignIn() {
   const router = useRouter()
   const [loading, setLoading] = useState(false);
-
+  const { login } = useAuth();
 
   const emailRef = useRef("")
   const passwordRef = useRef("")
- 
 
-  const handleLogin = () => {
+
+  const handleLogin = async () => {
     if (!emailRef.current || !passwordRef.current) {
       Alert.alert("Sign in", "Please fill all fields")
       return;
+    }
+    setLoading(true);
+    const response = await login(emailRef.current, passwordRef.current)
+    setLoading(false);
+    console.log("login response : ", response);
+
+    if(!response.success){
+      Alert.alert("Sign In ", response.message)
     }
     // login process
   }
@@ -73,12 +82,12 @@ export default function SignIn() {
             <View>
 
               {
-                loading ? ( 
+                loading ? (
                   <View className="flex-row justify-center items-center">
-                      <Loading size={hp(6.5)} />
+                    <Loading size={hp(6.5)} />
                   </View>
 
-                ): (
+                ) : (
 
                   <TouchableOpacity onPress={handleLogin} style={{ height: hp(6.5) }} className="bg-indigo-500 rounded-xl justify-center items-center py-3">
                     <Text style={{ fontSize: hp(2.7) }} className="text-white font-bold tracking-wider">

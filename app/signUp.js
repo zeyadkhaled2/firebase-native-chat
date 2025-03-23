@@ -38,7 +38,7 @@ export default function SignUp() {
     console.log(response);
     
     if(!response.success){
-      Alert.alert("Sign up", response.error)
+      Alert.alert("Sign up", response.message)
     }
   }
   return (
