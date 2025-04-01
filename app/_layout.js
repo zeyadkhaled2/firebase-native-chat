@@ -4,31 +4,33 @@ import { Slot, useRouter, useSegments } from "expo-router";
 import "../global.css";
 import { AuthContextProvider, useAuth } from '../context/authContext';
 import { LogBox } from 'react-native';
+import { MenuProvider } from 'react-native-popup-menu';
+
 
 LogBox.ignoreLogs([
-  'Setting a timer',
-  'AsyncStorage has been extracted from react-native core',
-  'Firebase: Error (auth/network-request-failed)'
+    'Setting a timer',
+    'AsyncStorage has been extracted from react-native core',
+    'Firebase: Error (auth/network-request-failed)'
 ]);
 
 const MainLayout = () => {
-    const {isAuthenticated} = useAuth();
+    const { isAuthenticated } = useAuth();
     const segments = useSegments();
     const router = useRouter();
 
     useEffect(() => {
-        if(typeof isAuthenticated === 'undefined') return;
-        
+        if (typeof isAuthenticated === 'undefined') return;
+
         const inApp = segments[0] == "(app)";
-        if(isAuthenticated && !inApp) {
+        if (isAuthenticated && !inApp) {
             // Redirect to home
             router.replace('home');
-        }else if(!isAuthenticated ) {
+        } else if (!isAuthenticated) {
             // Redirect to sign in
             // router replace will replace the current route with the new one so there is no back button
             router.replace('signIn');
         };
-    }, [isAuthenticated]); 
+    }, [isAuthenticated]);
 
     return <Slot />;
 }
@@ -36,8 +38,10 @@ const MainLayout = () => {
 
 export default function RootLayout() {
     return (
-        <AuthContextProvider>
-            <MainLayout />
-        </AuthContextProvider>  
+        <MenuProvider>
+            <AuthContextProvider>
+                <MainLayout />
+            </AuthContextProvider>
+        </MenuProvider>
     );
 }
